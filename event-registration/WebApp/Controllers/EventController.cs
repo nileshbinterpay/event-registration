@@ -7,11 +7,10 @@ namespace WebApp.Controllers
 {
     public class EventController : Controller
     {
-        // In-memory storage
         private static List<Event> Events = new List<Event>
         {
-            new Event { Id = 1, Name = "Tech Talk", Description = "A talk on latest technology trends." },
-            new Event { Id = 2, Name = "Workshop", Description = "Hands-on workshop for students." }
+            new Event { Id = 1, Name = "Tech Talk", Description = "A talk on latest technology trends.", Date = new DateTime(2024, 7, 10) },
+            new Event { Id = 2, Name = "Workshop", Description = "Hands-on workshop for students.", Date = new DateTime(2024, 7, 15) }
         };
         private static List<EventRegistration> Registrations = new List<EventRegistration>();
 
@@ -27,7 +26,6 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Prevent duplicate registration for the same event by email (case-insensitive)
                 bool isDuplicate = Registrations.Any(r => r.EventId == registration.EventId && r.StudentEmail.ToLower() == registration.StudentEmail.ToLower());
                 if (isDuplicate)
                 {
