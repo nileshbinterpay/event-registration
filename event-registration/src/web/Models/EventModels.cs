@@ -63,6 +63,7 @@ namespace web.Models
             }
         };
 
+        public static List<StudentRegistration> Registrations { get; } = new List<StudentRegistration>();
         public static List<StudentRegistration> Registrations { get; } = new List<StudentRegistration>(); 
 
         public static string MaskEmail(this string email)

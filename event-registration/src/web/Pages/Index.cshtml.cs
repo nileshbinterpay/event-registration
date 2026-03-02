@@ -37,24 +37,30 @@ namespace web.Pages
                 OnGet();
                 return Page();
             }
-            // Check for duplicate registration
-            bool alreadyRegistered = EventDataStore.Registrations.Any(r =>
-                r.EventId == Registration.EventId &&
-                r.StudentEmail.Trim().ToLower() == Registration.StudentEmail.Trim().ToLower()
-            );
-            if (alreadyRegistered)
+
+            lock (EventDataStore.Registrations)
             {
-                ErrorMessage = "You have already registered for this event with this email.";
-                OnGet();
-                return Page();
+                // Check for duplicate registration
+                bool alreadyRegistered = EventDataStore.Registrations.Any(r =>
+                    r.EventId == Registration.EventId &&
+                    r.StudentEmail.Trim().ToLower() == Registration.StudentEmail.Trim().ToLower()
+                );
+
+                if (alreadyRegistered)
+                {
+                    ErrorMessage = "You have already registered for this event with this email.";
+                    OnGet();
+                    return Page();
+                }
+
+                // Add registration
+                EventDataStore.Registrations.Add(new StudentRegistration
+                {
+                    EventId = Registration.EventId,
+                    StudentName = Registration.StudentName,
+                    StudentEmail = Registration.StudentEmail
+                });
             }
-            // Add registration
-            EventDataStore.Registrations.Add(new StudentRegistration
-            {
-                EventId = Registration.EventId,
-                StudentName = Registration.StudentName,
-                StudentEmail = Registration.StudentEmail
-            });
             return RedirectToPage();
         }
     }
