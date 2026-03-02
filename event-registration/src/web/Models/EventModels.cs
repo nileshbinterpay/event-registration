@@ -60,22 +60,31 @@ namespace web.Models
                 Name = "Fresher Party - Talent Show",
                 Description = "Showcase your talent at the fresher party. Open stage for all performances.",
                 EventTime = new DateTime(2026, 3, 15, 20, 0, 0, DateTimeKind.Local)
-```
+            }
         };
 
-        public static List<StudentRegistration> Registrations { get; } = new List<StudentRegistration>();
+        public static List<StudentRegistration> Registrations { get; } = new List<StudentRegistration>(); 
 
-        public static string RegisterStudent(StudentRegistration registration)
+        public static string MaskEmail(this string email)
         {
-            // Check for duplicate registration by email for the same event
-            var existingRegistration = Registrations.FirstOrDefault(r => r.EventId == registration.EventId && r.StudentEmail == registration.StudentEmail);
-            if (existingRegistration != null)
-            {
-                return "Error: Duplicate registration. You have already registered for this event.";
-            }
+            if (string.IsNullOrEmpty(email))
+                return email;
 
-            Registrations.Add(registration);
-            return "Registration successful!";
+            var parts = email.Split('@');
+            if (parts.Length != 2)
+                return email;
+
+            string name = parts[0];
+            string domain = parts[1];
+
+            if (name.Length <= 2)
+                return name[0] + "*" + "@" + domain;
+
+            string maskedName = name.Substring(0, 2)
+                                + new string('*', name.Length - 4)
+                                + name.Substring(name.Length - 2);
+
+            return maskedName + "@" + domain;
         }
     }
 }

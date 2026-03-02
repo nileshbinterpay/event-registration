@@ -1,4 +1,5 @@
 ﻿@page
+@using web.Models
 @model IndexModel
 @{
     ViewData["Title"] = "Event Dashboard";
@@ -43,7 +44,6 @@
             <h4>@ev.Name</h4>
             <p>                 
                 <strong>Time:</strong> @ev.EventTime.ToString("dddd, MMMM d, yyyy h:mm tt", System.Globalization.CultureInfo.InvariantCulture)<br />
-```
                 <strong>Description:</strong> @ev.Description
             </p>
             <strong>Registered Students:</strong>
@@ -52,7 +52,7 @@
                 {
                     foreach (var reg in regs)
                     {
-                        <li>@reg.StudentName (@reg.StudentEmail)</li>
+                        <li>@reg.StudentName (@reg.StudentEmail.MaskEmail())</li>
                     }
                 }
                 else
