@@ -41,7 +41,11 @@
     <div class="card mb-3">
         <div class="card-body">
             <h4>@ev.Name</h4>
-            <p>@ev.Description</p>
+            <p>                 
+                <strong>Time:</strong> @ev.EventTime.ToString("dddd, MMMM d, yyyy h:mm tt", System.Globalization.CultureInfo.InvariantCulture)<br />
+```
+                <strong>Description:</strong> @ev.Description
+            </p>
             <strong>Registered Students:</strong>
             <ul>
                 @if (Model.RegistrationsByEvent.TryGetValue(ev.Id, out var regs) && regs.Count > 0)
