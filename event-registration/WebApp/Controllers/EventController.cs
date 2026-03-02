@@ -54,6 +54,7 @@ namespace WebApp.Controllers
             ViewBag.EventStats = eventStats;
             ViewBag.Events = Events;
             ViewBag.Registrations = Registrations;
+            //return
             return View();
         }
     }
