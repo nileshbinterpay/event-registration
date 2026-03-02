@@ -26,5 +26,18 @@ namespace web.Models
         };
 
         public static List<StudentRegistration> Registrations { get; } = new List<StudentRegistration>();
+
+        public static string RegisterStudent(StudentRegistration registration)
+        {
+            // Check for duplicate registration by email for the same event
+            var existingRegistration = Registrations.FirstOrDefault(r => r.EventId == registration.EventId && r.StudentEmail == registration.StudentEmail);
+            if (existingRegistration != null)
+            {
+                return "Error: Duplicate registration. You have already registered for this event.";
+            }
+
+            Registrations.Add(registration);
+            return "Registration successful!";
+        }
     }
 }
