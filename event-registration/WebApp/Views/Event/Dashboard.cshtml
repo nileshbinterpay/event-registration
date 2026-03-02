@@ -1,0 +1,70 @@
+@{
+    ViewBag.Title = "Event Dashboard";
+    var events = ViewBag.Events as List<WebApp.Models.Event>;
+    var registrations = ViewBag.Registrations as List<WebApp.Models.EventRegistration>;
+    var eventStats = ViewBag.EventStats as IEnumerable<dynamic>;
+}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div style="max-width:900px;margin:30px auto;background:#f8f9fa;padding:30px 40px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+    <h2 style="text-align:center;">Event Registration Dashboard</h2>
+    <div style="margin:40px 0;">
+        <canvas id="eventChart" height="100"></canvas>
+    </div>
+    <script>
+        const ctx = document.getElementById('eventChart').getContext('2d');
+        const eventNames = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(eventStats.Select(e => e.EventName)));
+        const eventCounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(eventStats.Select(e => e.Count)));
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: eventNames,
+                datasets: [{
+                    label: 'Number of Students Registered',
+                    data: eventCounts,
+                    backgroundColor: '#007bff',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Students Registered per Event',
+                        font: { size: 18 }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        precision: 0
+                    }
+                }
+            }
+        });
+    </script>
+    <hr style="margin:32px 0;" />
+    <h3>Event Details & Registered Students</h3>
+    @foreach (var evt in events)
+    {
+        <div style="background:#fff;border:1px solid #e3e3e3;border-radius:8px;margin-bottom:18px;padding:18px 20px;">
+            <div style="font-size:1.2em;font-weight:600;color:#2c3e50;">@evt.Name</div>
+            <div style="color:#555;margin-bottom:8px;">@evt.Description</div>
+            <strong>Registered Students:</strong>
+            <ul style="margin:0;padding-left:18px;color:#007bff;">
+                @if (registrations != null && registrations.Any(r => r.EventId == evt.Id))
+                {
+                    foreach (var reg in registrations.Where(r => r.EventId == evt.Id))
+                    {
+                        <li>@reg.StudentName (@reg.StudentEmail)</li>
+                    }
+                }
+                else
+                {
+                    <li><em>No students registered yet.</em></li>
+                }
+            </ul>
+        </div>
+    }
+</div>
