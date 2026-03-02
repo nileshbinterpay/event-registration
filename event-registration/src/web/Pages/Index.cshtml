@@ -1,10 +1,65 @@
 ﻿@page
+@using web.Models
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Event Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1>Event Dashboard</h1>
+
+<h2>Register for an Event</h2>
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Registration.EventId">Event</label>
+        <select asp-for="Registration.EventId" class="form-control">
+            <option value="">-- Select Event --</option>
+            @foreach (var ev in Model.Events)
+            {
+                <option value="@ev.Id">@ev.Name</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="Registration.StudentName">Name</label>
+        <input asp-for="Registration.StudentName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Registration.StudentEmail">Email</label>
+        <input asp-for="Registration.StudentEmail" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+
+<hr />
+
+<h2>Events and Registrations</h2>
+@foreach (var ev in Model.Events)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h4>@ev.Name</h4>
+            <p>                 
+                <strong>Time:</strong> @ev.EventTime.ToString("dddd, MMMM d, yyyy h:mm tt", System.Globalization.CultureInfo.InvariantCulture)<br />
+                <strong>Description:</strong> @ev.Description
+            </p>
+            <strong>Registered Students:</strong>
+            <ul>
+                @if (Model.RegistrationsByEvent.TryGetValue(ev.Id, out var regs) && regs.Count > 0)
+                {
+                    foreach (var reg in regs)
+                    {
+                        <li>@reg.StudentName (@reg.StudentEmail.MaskEmail())</li>
+                    }
+                }
+                else
+                {
+                    <li>No students registered yet.</li>
+                }
+            </ul>
+        </div>
+    </div>
+}

@@ -1,0 +1,121 @@
+@{
+    ViewBag.Title = "Event Registration";
+    var events = ViewBag.Events as List<WebApp.Models.Event>;
+    var registrations = ViewBag.Registrations as List<WebApp.Models.EventRegistration>;
+    var error = ViewBag.Error as string;
+}
+<style>
+    .registration-container {
+        max-width: 600px;
+        margin: 30px auto;
+        background: #f8f9fa;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .event-list {
+        margin-bottom: 30px;
+    }
+    .event-item {
+        background: #fff;
+        border: 1px solid #e3e3e3;
+        border-radius: 8px;
+        margin-bottom: 18px;
+        padding: 18px 20px;
+    }
+    .event-title {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    .event-desc {
+        color: #555;
+        margin-bottom: 8px;
+    }
+    .student-list {
+        margin: 0;
+        padding-left: 18px;
+        color: #007bff;
+    }
+    .form-group {
+        margin-bottom: 18px;
+    }
+    label {
+        font-weight: 500;
+    }
+    input, select {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-top: 4px;
+    }
+    button[type="submit"] {
+        background: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    button[type="submit"]:hover {
+        background: #0056b3;
+    }
+</style>
+<div class="registration-container">
+    <h2 style="text-align:center;">Register for an Event</h2>
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div style="color:#b94a48;background:#f2dede;border:1px solid #ebccd1;padding:10px 18px;border-radius:6px;margin-bottom:18px;">
+            @error
+        </div>
+    }
+    <form asp-action="Register" method="post">
+        <div class="form-group">
+            <label>Student Name:</label>
+            <input type="text" name="StudentName" required />
+        </div>
+        <div class="form-group">
+            <label>Student Email:</label>
+            <input type="email" name="StudentEmail" required />
+        </div>
+        <div class="form-group">
+            <label>Event:</label>
+            <select name="EventId" required>
+                <option value="">Select Event</option>
+                @foreach (var evt in events)
+                {
+                    <option value="@evt.Id">@evt.Name (@evt.Date.ToString("yyyy-MM-dd"))</option>
+                }
+            </select>
+        </div>
+        <button type="submit">Register</button>
+    </form>
+    <hr style="margin:32px 0;" />
+    <div class="event-list">
+        <h3>Available Events & Registered Students</h3>
+        @foreach (var evt in events)
+        {
+            <div class="event-item">
+                <div class="event-title">@evt.Name <span style="font-size:0.95em;color:#888;font-weight:400;">(@evt.Date.ToString("yyyy-MM-dd"))</span></div>
+                <div class="event-desc">@evt.Description</div>
+                <strong>Registered Students:</strong>
+                <ul class="student-list">
+                    @if (registrations != null && registrations.Any(r => r.EventId == evt.Id))
+                    {
+                        foreach (var reg in registrations.Where(r => r.EventId == evt.Id))
+                        {
+                            <li>@reg.StudentName (@reg.StudentEmail)</li>
+                        }
+                    }
+                    else
+                    {
+                        <li><em>No students registered yet.</em></li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+</div>
